@@ -12,15 +12,15 @@ export class ModelService {
     return `This action returns all model`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} model`;
   }
 
-  update(id: number, updateModelDto: UpdateModelDto) {
+  update(id: string, updateModelDto: UpdateModelDto) {
     return `This action updates a #${id} model`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} model`;
   }
 }

@@ -1,1 +1,12 @@
-export class CreateClientDto {}
+import { IsString } from 'class-validator';
+
+export class CreateClientDto {
+  @IsString()
+  prenom: string;
+
+  @IsString()
+  nom: string;
+
+  @IsString()
+  tel: string;
+}
