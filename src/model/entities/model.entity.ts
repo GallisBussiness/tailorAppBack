@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type ModelDocument = ModelEntity & Document;
 
 @Schema({ timestamps: true, versionKey: false })
-export class Model {
-  @Prop({ type: String })
+export class ModelEntity {
+  @Prop({ type: String, required: true })
   nom: string;
 
   @Prop({ type: String })
@@ -11,8 +14,11 @@ export class Model {
   @Prop({ type: String })
   description: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   nom_tissu: string;
+
+  @Prop({ type: String })
+  couleur_dominante: string;
 }
 
-export const ModelSchema = SchemaFactory.createForClass(Model);
+export const ModelSchema = SchemaFactory.createForClass(ModelEntity);

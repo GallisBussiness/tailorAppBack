@@ -1,9 +1,10 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateModelDto {
   @IsString()
   nom: string;
 
+  @IsOptional()
   @IsString()
   photo: string;
 
@@ -12,4 +13,8 @@ export class CreateModelDto {
 
   @IsString()
   nom_tissu: string;
+
+  @IsOptional()
+  @IsString()
+  couleur_dominante: string;
 }

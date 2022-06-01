@@ -9,4 +9,7 @@ export class CreateClientDto {
 
   @IsString()
   tel: string;
+
+  @IsString()
+  adresse: string;
 }

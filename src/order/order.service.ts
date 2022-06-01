@@ -1,26 +1,66 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { ApiResponse } from 'src/interfaces/ApiResponse';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { Order, OrderDocument } from './entities/order.entity';
 
 @Injectable()
 export class OrderService {
-  create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+  constructor(
+    @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+  ) {}
+  async create(createOrderDto: CreateOrderDto): Promise<ApiResponse> {
+    try {
+      const order = new this.orderModel(createOrderDto);
+      return { data: await order.save(), status: 201 };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll(): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.orderModel.find().populate(['client', 'model']),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: string): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.orderModel.findById(id).populate(['client', 'model']),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(
+    id: string,
+    updateOrderDto: UpdateOrderDto,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.orderModel.findByIdAndUpdate(id, updateOrderDto),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: string): Promise<ApiResponse> {
+    try {
+      return { data: await this.orderModel.findByIdAndDelete(id), status: 200 };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 }

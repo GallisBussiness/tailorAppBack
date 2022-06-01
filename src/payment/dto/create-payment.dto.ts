@@ -1,15 +1,15 @@
 import { IsMongoId, IsNumber } from 'class-validator';
 
-export class CreateMesureDto {
+export class CreatePaymentDto {
   @IsNumber()
-  lon: number;
+  solde: number;
 
   @IsNumber()
-  lar: number;
+  avance: number;
 
   @IsNumber()
-  cou: number;
+  reste: number;
 
   @IsMongoId()
-  client: string;
+  order: string;
 }
