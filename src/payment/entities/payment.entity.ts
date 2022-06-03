@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { Document, Types } from 'mongoose';
 import { Order } from 'src/order/entities/order.entity';
 
@@ -15,7 +16,8 @@ export class Payment {
   @Prop({ type: Number, required: true, default: 0, min: 0 })
   reste: number;
 
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Orders' })
+  @Prop({ type: Types.ObjectId, required: true, ref: Order.name })
+  @Type(() => Order)
   order: Order;
 }
 

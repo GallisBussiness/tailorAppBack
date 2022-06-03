@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ApiResponse } from 'src/interfaces/ApiResponse';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { Payment, PaymentDocument } from './entities/payment.entity';
@@ -11,23 +12,61 @@ export class PaymentService {
     @InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
   ) {}
 
-  create(createPaymentDto: CreatePaymentDto) {
-    return 'This action adds a new payment';
+  async create(createPaymentDto: CreatePaymentDto): Promise<ApiResponse> {
+    try {
+      const payment = new this.paymentModel(createPaymentDto);
+      return { data: await payment.save(), status: 201 };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findAll() {
-    return `This action returns all payment`;
+  async findAll(): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.paymentModel.find().populate('order'),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
+  async findOne(id: string): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.paymentModel.findById(id).populate('order'),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    return `This action updates a #${id} payment`;
+  async update(
+    id: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.paymentModel
+          .findByIdAndUpdate(id, updatePaymentDto)
+          .populate('order'),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} payment`;
+  async remove(id: string): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.paymentModel.findByIdAndDelete(id).populate('order'),
+        status: 200,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 }
