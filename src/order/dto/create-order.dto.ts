@@ -1,12 +1,12 @@
-import { IsDate, IsString } from 'class-validator';
+import { IsMongoId, IsString } from 'class-validator';
 
 export class CreateOrderDto {
-  @IsDate()
-  date_de_livaison: Date;
-
   @IsString()
+  date_de_livraison: string;
+
+  @IsMongoId()
   client: string;
 
-  @IsString()
+  @IsMongoId()
   model: string;
 }

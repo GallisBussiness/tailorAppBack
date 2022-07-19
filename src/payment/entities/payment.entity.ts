@@ -5,7 +5,7 @@ import { Order } from 'src/order/entities/order.entity';
 
 export type PaymentDocument = Payment & Document;
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({ timestamps: true })
 export class Payment {
   @Prop({ type: Number, required: true })
   solde: number;
@@ -18,7 +18,7 @@ export class Payment {
 
   @Prop({ type: Types.ObjectId, required: true, ref: Order.name })
   @Type(() => Order)
-  order: Order;
+  order: string;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

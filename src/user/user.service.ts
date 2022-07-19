@@ -1,31 +1,69 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './entities/user.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const doc = await this.userModel.create(createUserDto);
+      const salt = await bcrypt.genSalt(10);
+      doc.password = await bcrypt.hash(doc.password, salt);
+      return await doc.save();
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    try {
+      return await this.userModel
+        .find()
+        .populate(['clients', 'models', 'orders', 'payments']);
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  async login(username: string) {
+    try {
+      return await this.userModel
+        .findOne({ tel: username })
+        .populate(['clients', 'models', 'orders', 'payments']);
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOne(id: string) {
+    try {
+      return await this.userModel
+        .findById(id)
+        .populate(['clients', 'models', 'orders', 'payments']);
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      return await this.userModel.findByIdAndUpdate(id, updateUserDto);
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      return await this.userModel.findByIdAndDelete(id);
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 }

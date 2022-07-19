@@ -1,7 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ApiResponse } from 'src/interfaces/ApiResponse';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client, ClientDocument } from './entities/client.entity';
@@ -12,51 +11,42 @@ export class ClientService {
     @InjectModel(Client.name) private clientModel: Model<ClientDocument>,
   ) {}
 
-  async create(createClientDto: CreateClientDto): Promise<ApiResponse> {
+  async create(createClientDto: CreateClientDto) {
     try {
       const client = new this.clientModel(createClientDto);
-      return { data: await client.save(), status: 201 };
+      return await client.save();
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async findAll(): Promise<ApiResponse> {
+  async findAll() {
     try {
-      return { data: await this.clientModel.find(), status: 200 };
+      return await this.clientModel.find();
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async findOne(id: string): Promise<ApiResponse> {
+  async findOne(id: string) {
     try {
-      return { data: await this.clientModel.findById(id), status: 200 };
+      return await this.clientModel.findById(id);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async update(
-    id: string,
-    updateClientDto: UpdateClientDto,
-  ): Promise<ApiResponse> {
+  async update(id: string, updateClientDto: UpdateClientDto) {
     try {
-      return {
-        data: await this.clientModel.findByIdAndUpdate(id, updateClientDto),
-        status: 200,
-      };
+      return await this.clientModel.findByIdAndUpdate(id, updateClientDto);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async remove(id: string): Promise<ApiResponse> {
+  async remove(id: string) {
     try {
-      return {
-        data: await this.clientModel.findByIdAndDelete(id),
-        status: 200,
-      };
+      return await this.clientModel.findByIdAndDelete(id);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }

@@ -3,12 +3,12 @@ import { Document } from 'mongoose';
 
 export type ModelDocument = ModelEntity & Document;
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({ timestamps: true })
 export class ModelEntity {
   @Prop({ type: String, required: true })
   nom: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, default: 'default_avatar.png' })
   photo: string;
 
   @Prop({ type: String })

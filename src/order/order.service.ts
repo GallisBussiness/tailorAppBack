@@ -11,46 +11,34 @@ export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
   ) {}
-  async create(createOrderDto: CreateOrderDto): Promise<ApiResponse> {
+  async create(createOrderDto: CreateOrderDto) {
     try {
       const order = new this.orderModel(createOrderDto);
-      return { data: await order.save(), status: 201 };
+      return await order.save();
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async findAll(): Promise<ApiResponse> {
+  async findAll() {
     try {
-      return {
-        data: await this.orderModel.find().populate(['client', 'model']),
-        status: 200,
-      };
+      return await this.orderModel.find().populate(['client', 'model']);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async findOne(id: string): Promise<ApiResponse> {
+  async findOne(id: string) {
     try {
-      return {
-        data: await this.orderModel.findById(id).populate(['client', 'model']),
-        status: 200,
-      };
+      return await this.orderModel.findById(id).populate(['client', 'model']);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
   }
 
-  async update(
-    id: string,
-    updateOrderDto: UpdateOrderDto,
-  ): Promise<ApiResponse> {
+  async update(id: string, updateOrderDto: UpdateOrderDto) {
     try {
-      return {
-        data: await this.orderModel.findByIdAndUpdate(id, updateOrderDto),
-        status: 200,
-      };
+      return await this.orderModel.findByIdAndUpdate(id, updateOrderDto);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
@@ -58,7 +46,7 @@ export class OrderService {
 
   async remove(id: string): Promise<ApiResponse> {
     try {
-      return { data: await this.orderModel.findByIdAndDelete(id), status: 200 };
+      return await this.orderModel.findByIdAndDelete(id);
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
