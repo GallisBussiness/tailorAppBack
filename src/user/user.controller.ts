@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  HttpCode,
   UseGuards,
   Req,
   UseInterceptors,
@@ -18,43 +17,51 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { existsSync, unlink } from 'fs';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @HttpCode(200)
-  @Post('login')
-  @UseGuards(AuthGuard('local'))
-  async login(@Req() req): Promise<any> {
-    return req.user;
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  async login(@Req() req): Promise<any> {
+    return this.authService.login(req.user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('upload/avatar/:id')
   @UseInterceptors(FileInterceptor('avatar'))
   async uploadFile(

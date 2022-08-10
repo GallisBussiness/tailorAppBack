@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { UserService } from 'src/user/user.service';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('payment')
 export class PaymentController {
   constructor(

@@ -9,7 +9,9 @@ import {
   HttpException,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { existsSync, unlink } from 'fs';
 import { UserService } from 'src/user/user.service';
@@ -17,6 +19,7 @@ import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('client')
 export class ClientController {
   constructor(
@@ -33,7 +36,7 @@ export class ClientController {
     const user = await this.userService.findOne(id);
     user.clients.push(client._id);
     user.save();
-    return { data: client, status: 201 };
+    return client;
   }
 
   @Get()
@@ -58,7 +61,7 @@ export class ClientController {
       const user = await this.userService.findOne(userid);
       user.models = user.models.filter((model) => model !== id);
       user.save();
-      return { data: true, status: 200 };
+      return true;
     } catch (error) {
       throw new HttpException(error.message, 500);
     }
@@ -78,6 +81,6 @@ export class ClientController {
           unlink(`./uploads/${avatar}`, console.log);
     }
     client.avatar = file.fieldname;
-    return { data: await client.save(), status: 201 };
+    return await client.save();
   }
 }

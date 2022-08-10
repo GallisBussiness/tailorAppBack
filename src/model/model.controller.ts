@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { ModelService } from './model.service';
 import { CreateModelDto } from './dto/create-model.dto';
@@ -15,7 +16,9 @@ import { UpdateModelDto } from './dto/update-model.dto';
 import { UserService } from 'src/user/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { existsSync, unlink } from 'fs';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('model')
 export class ModelController {
   constructor(

@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User, UserSchema } from './entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { diskStorage } from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
+import { AuthModule } from 'src/auth/auth.module';
 
 const storage = diskStorage({
   destination: function (req, file, cb) {
@@ -25,6 +26,7 @@ const storage = diskStorage({
     MulterModule.register({
       storage,
     }),
+    forwardRef(() => AuthModule),
   ],
   controllers: [UserController],
   providers: [UserService],
